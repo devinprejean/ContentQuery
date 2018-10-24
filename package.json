@@ -24,6 +24,7 @@
     "@types/webpack-env": "^1.13.6",
     "handlebars": "^4.0.12",
     "handlebars-helpers": "^0.10.0",
+    "logging-helpers": "file:custom_packages/logging-helpers",
     "moment": "^2.22.2",
     "react": "15.6.2",
     "react-ace": "^6.2.0",

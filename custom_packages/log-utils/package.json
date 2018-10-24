@@ -1,0 +1,118 @@
+{
+  "_from": "log-utils@^0.3.0",
+  "_id": "log-utils@0.3.0",
+  "_inBundle": false,
+  "_integrity": "sha512-/phCXtyt1ZfaEHYem4OlFc+zjmPedbmoMh26HmE/ypZHTYLfdXhJm7g3kNCt8xSFhyozUZaEYnbYDTCnZj83GA==",
+  "_location": "/logging-helpers/log-utils",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "log-utils@^0.3.0",
+    "name": "log-utils",
+    "escapedName": "log-utils",
+    "rawSpec": "^0.3.0",
+    "saveSpec": null,
+    "fetchSpec": "^0.3.0"
+  },
+  "_requiredBy": [
+    "/logging-helpers"
+  ],
+  "_resolved": "https://registry.npmjs.org/log-utils/-/log-utils-0.3.0.tgz",
+  "_shasum": "3fc65086e3a96b8af112cf9d28cdf15ab59fe09f",
+  "_spec": "log-utils@^0.3.0",
+  "_where": "C:\\Git\\upwork\\ContentQuery\\node_modules\\logging-helpers",
+  "author": {
+    "name": "Jon Schlinkert",
+    "url": "https://github.com/jonschlinkert"
+  },
+  "bugs": {
+    "url": "https://github.com/jonschlinkert/log-utils/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "ansi-colors": "^1.1.0",
+    "error-symbol": "^0.1.0",
+    "info-symbol": "^0.1.0",
+    "log-ok": "^0.1.1",
+    "success-symbol": "^0.1.0",
+    "time-stamp": "^1.0.1",
+    "warning-symbol": "^0.1.0"
+  },
+  "deprecated": false,
+  "description": "Basic logging utils: colors, symbols and timestamp.",
+  "devDependencies": {
+    "clear-require": "^1.0.1",
+    "mocha": "^2.4.5",
+    "verb-generate-readme": "^0.1.21"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "files": [
+    "index.js"
+  ],
+  "homepage": "https://github.com/jonschlinkert/log-utils",
+  "keywords": [
+    "ansi",
+    "chalk",
+    "check",
+    "checkmark",
+    "cli",
+    "color",
+    "colors",
+    "command",
+    "console",
+    "cyan",
+    "error",
+    "green",
+    "info",
+    "line",
+    "log",
+    "red",
+    "stamp",
+    "success",
+    "terminal",
+    "time",
+    "time-stamp",
+    "timestamp",
+    "util",
+    "utility",
+    "utils",
+    "warn",
+    "warning",
+    "yellow"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "name": "log-utils",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jonschlinkert/log-utils.git"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "verb": {
+    "related": {
+      "list": [
+        "ansi-colors",
+        "error-symbol",
+        "info-symbol",
+        "success-symbol",
+        "warning-symbol"
+      ]
+    },
+    "layout": "default",
+    "reflinks": [
+      "ansi-colors",
+      "time-diff",
+      "verb",
+      "verb-readme-generator"
+    ],
+    "plugins": [
+      "gulp-format-md"
+    ]
+  },
+  "version": "0.3.0"
+}
