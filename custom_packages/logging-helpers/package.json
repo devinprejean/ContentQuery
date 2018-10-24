@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "isobject": "^3.0.0",
-    "log-utils": "file:../log-utils"
+    "log-utils": "file:log-utils"
   },
   "description": "Basic template helpers for printing messages out to the console. Useful for debugging context in templates. Should work with any template engine.",
   "devDependencies": {
