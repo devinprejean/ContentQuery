@@ -19,13 +19,13 @@ export class CamlQueryHelper {
 
         // Generates the <Where /> part
         if(querySettings.filters && !isEmpty(querySettings.filters)) {
-            let sortedFilters = querySettings.filters.sort((a, b) => { return a.index - b.index; });
+            const sortedFilters = querySettings.filters.sort((a, b) => { return a.index - b.index; });
             query += Text.format('<Where>{0}</Where>', this.generateFilters(sortedFilters));
         }
 
         // Generates the <OrderBy /> part
         if(querySettings.orderBy && !isEmpty(querySettings.orderBy)) {
-            let isAscending = querySettings.orderByDirection == 'desc' ? 'FALSE' : 'TRUE';
+            const isAscending = querySettings.orderByDirection == 'desc' ? 'FALSE' : 'TRUE';
             query += Text.format("<OrderBy><FieldRef Name='{0}' Ascending='{1}' /></OrderBy>", querySettings.orderBy, isAscending);
         }
 
@@ -67,7 +67,7 @@ export class CamlQueryHelper {
         // Appends a CAML node for each filter
         let itemCount = 0;
 
-        for(let filter of filters.reverse()) {
+        for(const filter of filters.reverse()) {
             filterXml = '<{0}><FieldRef Name="{1}" /><Value {2} Type="{3}">{4}</Value></{0}>';
             itemCount++;
             let specialAttribute = '';
@@ -95,13 +95,13 @@ export class CamlQueryHelper {
 
             // If it's any other kind of filter (Text, DateTime, Lookup, Number etc...)
             else {
-                let valueType = (filter.field.type == QueryFilterFieldType.Lookup ? QueryFilterFieldType[QueryFilterFieldType.Text] : QueryFilterFieldType[filter.field.type]);
+                const valueType = (filter.field.type == QueryFilterFieldType.Lookup ? QueryFilterFieldType[QueryFilterFieldType.Text] : QueryFilterFieldType[filter.field.type]);
                 query += Text.format(filterXml, QueryFilterOperator[filter.operator], filter.field.internalName, specialAttribute, valueType, this.formatFilterValue(filter));
             }
 
             // Appends the Join tags if needed
             if (itemCount >= 2) {
-                let logicalJoin = QueryFilterJoin[filter.join];
+                const logicalJoin = QueryFilterJoin[filter.join];
                 query = Text.format("<{0}>", logicalJoin) + query;
                 query += Text.format("</{0}>", logicalJoin);
             }
@@ -118,22 +118,22 @@ export class CamlQueryHelper {
     private static generateTaxonomyFilter(filter:IQueryFilter): string
     {
         let filterOutput = '';
-        let filterTerms = filter.value as ITag[];
+        const filterTerms = filter.value as ITag[];
 
         if(isEmpty(filter.value)) {
             return '';
         }
         else if (filter.operator == QueryFilterOperator.ContainsAny || filterTerms == null) {
-            let values = filterTerms != null ? filterTerms.map(x => Text.format("<Value Type='Integer'>{0}</Value>", x.key)).join('') : '';
+            const values = filterTerms != null ? filterTerms.map(x => Text.format("<Value Type='Integer'>{0}</Value>", x.key)).join('') : '';
             filterOutput = Text.format("<In><FieldRef Name='{0}' LookupId='TRUE' /><Values>{1}</Values></In>", filter.field.internalName, values);
         }
         else if (filter.operator == QueryFilterOperator.ContainsAll) {
-            let taxFilters: IQueryFilter[] = [];
+            const taxFilters: IQueryFilter[] = [];
 
-            for(let term of filterTerms) {
-                let termValue:ITag[] = [ term ];
+            for(const term of filterTerms) {
+                const termValue:ITag[] = [ term ];
 
-                let taxFilter:IQueryFilter = {
+                const taxFilter:IQueryFilter = {
                     index: null,
                     field: filter.field,
                     value: termValue,
@@ -157,7 +157,7 @@ export class CamlQueryHelper {
     private static generateUserFilter(filter:IQueryFilter): string
     {
         let filterOutput = '';
-        let filterUsers = filter.value as IPersonaProps[];
+        const filterUsers = filter.value as IPersonaProps[];
 
         if(filter.me) {
             filterOutput = Text.format("<Eq><FieldRef Name='{0}' /><Value Type='Integer'><UserID /></Value></Eq>", filter.field.internalName);
@@ -167,17 +167,17 @@ export class CamlQueryHelper {
         }
         else if (filter.operator == QueryFilterOperator.ContainsAny || filterUsers == null)
         {
-            let values = filterUsers != null ? filterUsers.map(x => Text.format("<Value Type='Integer'>{0}</Value>", x.optionalText)).join('') : '';
+            const values = filterUsers != null ? filterUsers.map(x => Text.format("<Value Type='Integer'>{0}</Value>", x.optionalText)).join('') : '';
             filterOutput = Text.format("<In><FieldRef Name='{0}' LookupId='TRUE' /><Values>{1}</Values></In>", filter.field.internalName, values);
         }
         else if (filter.operator == QueryFilterOperator.ContainsAll)
         {
-            let userFilters: IQueryFilter[] = [];
+            const userFilters: IQueryFilter[] = [];
 
-            for(let user of filterUsers) {
-                let userValue:IPersonaProps[] = [ user ];
+            for(const user of filterUsers) {
+                const userValue:IPersonaProps[] = [ user ];
 
-                let userFilter:IQueryFilter = {
+                const userFilter:IQueryFilter = {
                     index: null,
                     field: filter.field,
                     value: userValue,
@@ -223,7 +223,7 @@ export class CamlQueryHelper {
      * @param dateValue : A valid ISO 8601 date string
      *************************************************************************************************/
     private static formatDateFilterValue(dateValue:string): string {
-        let date = moment(dateValue, moment.ISO_8601, true);
+        const date = moment(dateValue, moment.ISO_8601, true);
 
         if(date.isValid()) {
             dateValue = date.format("YYYY-MM-DDTHH:mm:ss\\Z");
@@ -239,24 +239,24 @@ export class CamlQueryHelper {
     private static formatDateExpressionFilterValue(filterValue: string): string {
 		
 		// Replaces any "[Today] +/- [digit]" expression
-        let regex = new RegExp("\\[Today\\]\\s*[\\+-]\\s*\\[{0,1}\\d{1,}\\]{0,1}");
-		let results = regex.exec(filterValue);
+        const regex = new RegExp("\\[Today\\]\\s*[\\+-]\\s*\\[{0,1}\\d{1,}\\]{0,1}");
+		const results = regex.exec(filterValue);
 
         if(results != null) {
-            for(let result of results) {
-                let operator = result.indexOf('+') > 0 ? '+' : '-';
-                let addOrRemove = operator == '+' ? 1 : -1;
-                let operatorSplit = result.split(operator);
-                let digit = parseInt(operatorSplit[operatorSplit.length - 1].replace("[", "").replace("]", "").trim()) * addOrRemove;
-                let dt = new Date();
+            for(const result of results) {
+                const operator = result.indexOf('+') > 0 ? '+' : '-';
+                const addOrRemove = operator == '+' ? 1 : -1;
+                const operatorSplit = result.split(operator);
+                const digit = parseInt(operatorSplit[operatorSplit.length - 1].replace("[", "").replace("]", "").trim()) * addOrRemove;
+                const dt = new Date();
                 dt.setDate(dt.getDate() + digit);
-                let formatDate = moment(dt).format("YYYY-MM-DDTHH:mm:ss\\Z");
+                const formatDate = moment(dt).format("YYYY-MM-DDTHH:mm:ss\\Z");
                 filterValue = filterValue.replace(result, formatDate);
             }
         }
 
 		// Replaces any "[Today]" expression by it's actual value
-        let formattedDate = moment(new Date()).format("YYYY-MM-DDTHH:mm:ss\\Z");
+        const formattedDate = moment(new Date()).format("YYYY-MM-DDTHH:mm:ss\\Z");
         filterValue = filterValue.replace("[Today]", formattedDate);
 
         return filterValue;
@@ -268,12 +268,12 @@ export class CamlQueryHelper {
      * @param textValue : The text filter value which needs to be formatted
      *************************************************************************************************/
     private static formatTextFilterValue(textValue:string): string {
-        let regex = new RegExp("\\[PageQueryString:[A-Za-z0-9_-]*\\]");
-        let results = regex.exec(textValue);
+        const regex = new RegExp("\\[PageQueryString:[A-Za-z0-9_-]*\\]");
+        const results = regex.exec(textValue);
 
         if(results != null) {
-            for(let result of results) {
-                let parameter = result.substring(17, result.length - 1);
+            for(const result of results) {
+                const parameter = result.substring(17, result.length - 1);
                 textValue = textValue.replace(result, this.getUrlParameter(parameter));
             }
         }
@@ -292,7 +292,7 @@ export class CamlQueryHelper {
             url = window.location.href;
         }
         name = name.replace(/[\[\]]/g, "\\$&");
-        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        const regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
             results = regex.exec(url);
         if (!results) return null;
         if (!results[2]) return '';

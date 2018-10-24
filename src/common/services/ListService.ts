@@ -26,14 +26,14 @@ export class ListService {
 	 **************************************************************************************************/
 	public getListItemsByQuery(webUrl: string, listId: string, camlQuery: string): Promise<any> {
 		return new Promise<any>((resolve,reject) => {
-			let endpoint = Text.format("{0}/_api/web/lists(guid'{1}')/GetItems?$expand=FieldValuesAsText,FieldValuesAsHtml", webUrl, listId);
-			let data:any = { 
+			const endpoint = Text.format("{0}/_api/web/lists(guid'{1}')/GetItems?$expand=FieldValuesAsText,FieldValuesAsHtml", webUrl, listId);
+			const data:any = { 
 				query : { 
 					__metadata: { type: "SP.CamlQuery" }, 
 					ViewXml: camlQuery
 				}
 			};
-			let options: ISPHttpClientOptions = { headers: { 'odata-version': '3.0' }, body: JSON.stringify(data) };
+			const options: ISPHttpClientOptions = { headers: { 'odata-version': '3.0' }, body: JSON.stringify(data) };
 
 			this.spHttpClient.post(endpoint, SPHttpClient.configurations.v1, options)
 				.then((postResponse: SPHttpClientResponse) => {
@@ -57,11 +57,11 @@ export class ListService {
 	 **************************************************************************************************/
 	public getListTitlesFromWeb(webUrl: string): Promise<IListTitle[]> {
 		return new Promise<IListTitle[]>((resolve,reject) => {
-			let endpoint = Text.format("{0}/_api/web/lists?$select=Id,Title&$filter=(IsPrivate eq false) and (IsCatalog eq false) and (Hidden eq false)", webUrl);
+			const endpoint = Text.format("{0}/_api/web/lists?$select=Id,Title&$filter=(IsPrivate eq false) and (IsCatalog eq false) and (Hidden eq false)", webUrl);
 			this.spHttpClient.get(endpoint, SPHttpClient.configurations.v1).then((response: SPHttpClientResponse) => {
 				if(response.ok) {
 					response.json().then((data: any) => {
-						let listTitles:IListTitle[] = data.value.map((list) => { return { id: list.Id, title: list.Title }; });
+						const listTitles:IListTitle[] = data.value.map((list) => { return { id: list.Id, title: list.Title }; });
 						resolve(listTitles.sort((a,b) => { return Number(a.title > b.title); }));
 					})
 					.catch((error) => { reject(error); });
@@ -84,9 +84,9 @@ export class ListService {
 	 **************************************************************************************************/
 	public getListFields(webUrl: string, listId: string, selectProperties?: string[], orderBy?: string): Promise<any> {
 		return new Promise<any>((resolve,reject) => {
-			let selectProps = selectProperties ? selectProperties.join(',') : '';
-			let order = orderBy ? orderBy : 'InternalName';
-			let endpoint = Text.format("{0}/_api/web/lists(guid'{1}')/Fields?$select={2}&$orderby={3}", webUrl, listId, selectProps, order);
+			const selectProps = selectProperties ? selectProperties.join(',') : '';
+			const order = orderBy ? orderBy : 'InternalName';
+			const endpoint = Text.format("{0}/_api/web/lists(guid'{1}')/Fields?$select={2}&$orderby={3}", webUrl, listId, selectProps, order);
 			this.spHttpClient.get(endpoint, SPHttpClient.configurations.v1).then((response: SPHttpClientResponse) => {
 				if(response.ok) {
 					resolve(response.json());

@@ -28,8 +28,8 @@ export class PeoplePickerService {
 	 **************************************************************************************************/
 	public getUserSuggestions(webUrl: string, query: string, principalSource: number, principalType: number, maximumEntitySuggestion?: number): Promise<any> {
 		return new Promise<any>((resolve,reject) => {
-			let endpoint = Text.format("{0}/_api/SP.UI.ApplicationPages.ClientPeoplePickerWebServiceInterface.clientPeoplePickerSearchUser", webUrl);
-			let data:any = {
+			const endpoint = Text.format("{0}/_api/SP.UI.ApplicationPages.ClientPeoplePickerWebServiceInterface.clientPeoplePickerSearchUser", webUrl);
+			const data:any = {
                 queryParams:{
                     __metadata:{
                         'type':'SP.UI.ApplicationPages.ClientPeoplePickerQueryParameters'
@@ -40,7 +40,7 @@ export class PeoplePickerService {
 					MaximumEntitySuggestions: maximumEntitySuggestion || 50
                 }
             };
-			let options: ISPHttpClientOptions = { headers: { 'odata-version': '3.0' }, body: JSON.stringify(data) };
+			const options: ISPHttpClientOptions = { headers: { 'odata-version': '3.0' }, body: JSON.stringify(data) };
 
 			this.spHttpClient.post(endpoint, SPHttpClient.configurations.v1, options)
 				.then((response: SPHttpClientResponse) => {

@@ -40,7 +40,7 @@ export default class ContentQuery extends React.Component<IContentQueryProps, IC
       super(props);
 
       // Imports the handlebars-helpers
-      let helpers = require<any>('handlebars-helpers')({
+      const helpers = require<any>('handlebars-helpers')({
         handlebars: Handlebars
       });
 
@@ -66,7 +66,7 @@ export default class ContentQuery extends React.Component<IContentQueryProps, IC
    *************************************************************************************/
   private loadExternalScriptsSequentially(scriptUrls:string[]): Promise<{}> {
     var index = 0;
-    var _this_ = this;
+    const _this_ = this;
 
     return new Promise((resolve, reject) => {
       function next() {
@@ -97,7 +97,7 @@ export default class ContentQuery extends React.Component<IContentQueryProps, IC
     if(this.areMandatoryFieldsConfigured()) {
 
       // Stores the current call timestamp locally 
-      let currentCallTimeStamp = new Date().valueOf();
+      const currentCallTimeStamp = new Date().valueOf();
       this.onGoingAsyncCalls.push(currentCallTimeStamp);
 
       // Sets the state to "loading" only if it's the only async call going on (otherwise it's already loading)
@@ -170,8 +170,8 @@ export default class ContentQuery extends React.Component<IContentQueryProps, IC
       this.executeExternalCallbacks(this.callbackOnPreRenderName);
 
       // Processes the template
-      let template = Handlebars.compile(templateContent);
-      let result = template(templateContext);
+      const template = Handlebars.compile(templateContent);
+      const result = template(templateContext);
 
       // Updates the state only if the stored calls are still empty (just in case they get updated during the processing of the handlebars template)
       if(this.onGoingAsyncCalls.length == 0) {
@@ -195,21 +195,21 @@ export default class ContentQuery extends React.Component<IContentQueryProps, IC
     if(this.props.externalScripts) {
 
       // Gets the ReactContentQuery namespace previously created in the constructor
-      var ReactContentQuery = window[this.nsReactContentQuery];
+      const ReactContentQuery = window[this.nsReactContentQuery];
     
         // Loops through all the external scripts of the current WebPart
-        for(let scriptUrl of this.props.externalScripts) {
+        for(const scriptUrl of this.props.externalScripts) {
     
           // Generates a valid namespace suffix based on the current file name
-          var namespaceSuffix = this.generateNamespaceFromScriptUrl(scriptUrl);
+          const namespaceSuffix = this.generateNamespaceFromScriptUrl(scriptUrl);
     
           // Checks if the current file's namespace is available within the page
-          var scriptNamespace = ReactContentQuery[this.nsExternalScripts][namespaceSuffix];
+          const scriptNamespace = ReactContentQuery[this.nsExternalScripts][namespaceSuffix];
     
           if(scriptNamespace) {
     
             // Checks if the needed callback is available in the script's namespace
-            var callback = scriptNamespace[callbackName];
+            const callback = scriptNamespace[callbackName];
     
             if(callback) {
               callback(this.props.wpContext, Handlebars);

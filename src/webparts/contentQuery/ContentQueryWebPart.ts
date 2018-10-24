@@ -78,7 +78,7 @@ export default class ContentQueryWebPart extends BaseClientSideWebPart<IContentQ
    * Renders the WebPart
    ***************************************************************************/
   public render(): void {
-    let querySettings: IQuerySettings = {
+    const querySettings: IQuerySettings = {
       webUrl: this.properties.webUrl,
       listId: this.properties.listId,
       limitEnabled: this.properties.limitEnabled,
@@ -113,9 +113,9 @@ export default class ContentQueryWebPart extends BaseClientSideWebPart<IContentQ
    ***************************************************************************/
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
 
-    let firstCascadingLevelDisabled = !this.properties.siteUrl;
-    let secondCascadingLevelDisabled = !this.properties.siteUrl || !this.properties.webUrl;
-    let thirdCascadingLevelDisabled = !this.properties.siteUrl || !this.properties.webUrl || !this.properties.listId;
+    const firstCascadingLevelDisabled = !this.properties.siteUrl;
+    const secondCascadingLevelDisabled = !this.properties.siteUrl || !this.properties.webUrl;
+    const thirdCascadingLevelDisabled = !this.properties.siteUrl || !this.properties.webUrl || !this.properties.listId;
 
     // Creates a custom PropertyPaneAsyncDropdown for the siteUrl property
     this.siteUrlDropdown = new PropertyPaneAsyncDropdown(ContentQueryConstants.propertySiteUrl, {
@@ -405,7 +405,7 @@ export default class ContentQueryWebPart extends BaseClientSideWebPart<IContentQ
 
     // If the viewfields have changed, update the default template text if it hasn't been altered by the user
     if(propertyPath == ContentQueryConstants.propertyViewFields && !this.properties.hasDefaultTemplateBeenUpdated) {
-      let generatedTemplate = this.ContentQueryService.generateDefaultTemplate(newValue);
+      const generatedTemplate = this.ContentQueryService.generateDefaultTemplate(newValue);
       update(this.properties, ContentQueryConstants.propertyTemplateText, (): any => { return generatedTemplate; });
       this.templateTextDialog.properties.dialogTextFieldValue = generatedTemplate;
       rerenderTemplateTextDialog = true;
@@ -464,9 +464,9 @@ export default class ContentQueryWebPart extends BaseClientSideWebPart<IContentQ
 
     return new Promise<string>((resolve, reject) => {  
       // Resolves an error if the file isn't a valid number between 1 to 999
-      let parsedValue = parseInt(value);
-      let isNumeric = !isNaN(parsedValue) && isFinite(parsedValue);
-      let isValid = (isNumeric && parsedValue >= 1 && parsedValue <= 999) || isEmpty(value);
+      const parsedValue = parseInt(value);
+      const isNumeric = !isNaN(parsedValue) && isFinite(parsedValue);
+      const isValid = (isNumeric && parsedValue >= 1 && parsedValue <= 999) || isEmpty(value);
       resolve(!isValid ? strings.ErrorItemLimit : '');
     });
   }

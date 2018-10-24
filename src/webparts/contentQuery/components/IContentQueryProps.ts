@@ -1,4 +1,4 @@
-import { IWebPartContext }              from '@microsoft/sp-webpart-base';
+import { WebPartContext} from '@microsoft/sp-webpart-base';
 import { IContentQueryTemplateContext } from './IContentQueryTemplateContext';
 import { IContentQueryStrings }         from './IContentQueryStrings';
 import { IQuerySettings }               from './IQuerySettings';
@@ -10,7 +10,7 @@ export interface IContentQueryProps {
   querySettings: IQuerySettings;
   templateText?: string;
   templateUrl?: string;
-  wpContext: IWebPartContext;
+  wpContext: WebPartContext;
   externalScripts?: string[];
   strings: IContentQueryStrings;
   stateKey: string;

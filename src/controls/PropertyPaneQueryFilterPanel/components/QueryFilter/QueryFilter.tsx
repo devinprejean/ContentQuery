@@ -45,7 +45,7 @@ export class QueryFilter extends React.Component<IQueryFilterProps, IQueryFilter
      * When the field Dropdown changes
      *************************************************************************************/
     private onFieldDropdownChange(option: IDropdownOption, index?: number) {
-         let field = this.props.fields.filter((f) => { return f.internalName == option.key; });
+         const field = this.props.fields.filter((f) => { return f.internalName == option.key; });
          this.state.filter.field = field != null && field.length > 0 ? field[0] : null;
          this.state.filter.operator = (this.state.filter.field && (this.state.filter.field.type == QueryFilterFieldType.User || this.state.filter.field.type == QueryFilterFieldType.Taxonomy) ? QueryFilterOperator.ContainsAny : QueryFilterOperator.Eq);
          this.state.filter.value = null;
@@ -126,9 +126,9 @@ export class QueryFilter extends React.Component<IQueryFilterProps, IQueryFilter
     private onDateExpressionChange(newValue: string): string {
 
         // Validates the picker
-        let regex = new RegExp(/^\[Today\](\s{0,}[\+-]\s{0,}\[{0,1}\d{1,4}\]{0,1}){0,1}$/);
-        let isValid = regex.test(newValue) || isEmpty(newValue);
-        let errorMsg = isValid ? '' : this.props.strings.datePickerExpressionError;
+        const regex = new RegExp(/^\[Today\](\s{0,}[\+-]\s{0,}\[{0,1}\d{1,4}\]{0,1}){0,1}$/);
+        const isValid = regex.test(newValue) || isEmpty(newValue);
+        const errorMsg = isValid ? '' : this.props.strings.datePickerExpressionError;
         
         if(isValid) {
             // If the change is NOT triggered by the date picker change
@@ -180,12 +180,12 @@ export class QueryFilter extends React.Component<IQueryFilterProps, IQueryFilter
      * Returns the options for the field Dropdown component
      *************************************************************************************/
     private getFieldDropdownOptions(): IDropdownOption[] {
-        let options:IDropdownOption[] = [
+        const options:IDropdownOption[] = [
             { key: "", text: this.props.strings.fieldSelectLabel }
         ];
 
-        for(let field of this.props.fields) {
-            let option:IDropdownOption = { key: field.internalName, text: Text.format("{0} \{\{{1}\}\}", field.displayName, field.internalName) };
+        for(const field of this.props.fields) {
+            const option:IDropdownOption = { key: field.internalName, text: Text.format("{0} \{\{{1}\}\}", field.displayName, field.internalName) };
             options.push(option);
         }
 
@@ -197,7 +197,7 @@ export class QueryFilter extends React.Component<IQueryFilterProps, IQueryFilter
      * Returns the options for the operator Dropdown component
      *************************************************************************************/
     private getOperatorDropdownOptions(): IDropdownOption[] {
-        let fieldType = this.state.filter.field ? this.state.filter.field.type : QueryFilterFieldType.Text;
+        const fieldType = this.state.filter.field ? this.state.filter.field.type : QueryFilterFieldType.Text;
         let options:IDropdownOption[];
 
         // Operators for User and Taxonomy field types
@@ -240,7 +240,7 @@ export class QueryFilter extends React.Component<IQueryFilterProps, IQueryFilter
      * Returns the options for the operator Dropdown component
      *************************************************************************************/
     private getJoinGroupOptions(): IChoiceGroupOption[] {
-        let options:IChoiceGroupOption[] = [
+        const options:IChoiceGroupOption[] = [
             { key: QueryFilterJoin[QueryFilterJoin.And], text: this.props.strings.andLabel, checked: (this.state.filter.join == QueryFilterJoin.And) },
             { key: QueryFilterJoin[QueryFilterJoin.Or], text: this.props.strings.orLabel, checked: (this.state.filter.join == QueryFilterJoin.Or) }
         ];
@@ -279,7 +279,7 @@ export class QueryFilter extends React.Component<IQueryFilterProps, IQueryFilter
             return dateValue;
         }
         else if(typeof(dateValue) === 'string') {
-            let date = moment(dateValue, moment.ISO_8601, true);
+            const date = moment(dateValue, moment.ISO_8601, true);
 
             if(date.isValid()) {
                 return date.toDate();
@@ -303,7 +303,7 @@ export class QueryFilter extends React.Component<IQueryFilterProps, IQueryFilter
      * @param dateStr : The string that must be parsed to a Date object
      *************************************************************************************/
     private onDatePickerParse(dateStr: string) : Date {
-        let date = moment(dateStr, this.props.strings.datePickerFormat, true);
+        const date = moment(dateStr, this.props.strings.datePickerFormat, true);
         return date.toDate();
     }
 

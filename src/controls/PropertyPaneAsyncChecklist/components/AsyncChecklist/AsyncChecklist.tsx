@@ -40,8 +40,8 @@ export class AsyncChecklist extends React.Component<IAsyncChecklistProps, IAsync
      * @param checked : Whether the checkbox is not checked or not
      *************************************************************************************/
     private onCheckboxChange(ev?: React.FormEvent<HTMLInputElement>, checked?: boolean) {
-        let checkboxKey = ev.currentTarget.attributes.getNamedItem('value').value;
-        let itemIndex = this.checkedItems.indexOf(checkboxKey);
+        const checkboxKey = ev.currentTarget.attributes.getNamedItem('value').value;
+        const itemIndex = this.checkedItems.indexOf(checkboxKey);
 
         if(checked) {
             if(itemIndex == -1) {
@@ -73,7 +73,7 @@ export class AsyncChecklist extends React.Component<IAsyncChecklistProps, IAsync
      * Loads the checklist items asynchronously
      *************************************************************************************/
     private loadItems() {
-        let _this_ = this;
+        const _this_ = this;
 
         _this_.checkedItems = this.getDefaultCheckedItems();
 

@@ -31,23 +31,23 @@ export class SearchService {
 				.then((results: any) => {
 					
 					// If there is more rows available...
-					let relevantResults = results.PrimaryQueryResult.RelevantResults;
+					const relevantResults = results.PrimaryQueryResult.RelevantResults;
 					let initialResults:any[] = relevantResults.Table.Rows;
 
 					if(relevantResults.TotalRowsIncludingDuplicates > relevantResults.RowCount) {
 
 						// Stores and executes all the missing calls in parallel until we have ALL results
-						let promises = new Array<Promise<any>>();
-						let nbPromises = Math.ceil(relevantResults.TotalRowsIncludingDuplicates / relevantResults.RowCount);
+						const promises = new Array<Promise<any>>();
+						const nbPromises = Math.ceil(relevantResults.TotalRowsIncludingDuplicates / relevantResults.RowCount);
 
 						for(let i = 1; i < nbPromises; i++) {
-							let nextStartRow = (i * relevantResults.RowCount);
+							const nextStartRow = (i * relevantResults.RowCount);
 							promises.push(this.getSearchResults(webUrl, queryParameters, nextStartRow));
 						}
 
 						// Once the missing calls are done, concatenates their results to the first request
 						Promise.all(promises).then((values) => {
-							for(let recursiveResults of values) {
+							for(const recursiveResults of values) {
 								initialResults = initialResults.concat(recursiveResults.PrimaryQueryResult.RelevantResults.Table.Rows);
 							}
 							results.PrimaryQueryResult.RelevantResults.Table.Rows = initialResults;
@@ -78,7 +78,7 @@ export class SearchService {
 		return new Promise<any>((resolve,reject) => {
 			
 			queryParameters = this.ensureSearchQueryParameter(queryParameters, 'StartRow', startRow);
-			let endpoint = Text.format("{0}/_api/search/query?{1}", webUrl, queryParameters);
+			const endpoint = Text.format("{0}/_api/search/query?{1}", webUrl, queryParameters);
 
 			this.spHttpClient.get(endpoint, SPHttpClient.configurations.v1).then((response: SPHttpClientResponse) => {
 				if(response.ok) {
@@ -99,7 +99,7 @@ export class SearchService {
 	 **************************************************************************************************/
 	public getSitesStartingWith(startingUrl: string): Promise<string[]> {
 		return new Promise<string[]>((resolve,reject) => {
-			let queryProperties = Text.format("querytext='Path:{0}/* AND contentclass:STS_Site'&selectproperties='Path'&trimduplicates=false&rowLimit=500&Properties='EnableDynamicGroups:true'", startingUrl);
+			const queryProperties = Text.format("querytext='Path:{0}/* AND contentclass:STS_Site'&selectproperties='Path'&trimduplicates=false&rowLimit=500&Properties='EnableDynamicGroups:true'", startingUrl);
 
 			this.getSearchResultsRecursive(startingUrl, queryProperties)
 				.then((results: any) => {
@@ -119,7 +119,7 @@ export class SearchService {
 	 **************************************************************************************************/
 	public getWebsFromSite(siteUrl: string): Promise<string[]> {
 		return new Promise<string[]>((resolve,reject) => {
-			let queryProperties = Text.format("querytext='SPSiteUrl:{0} AND (contentclass:STS_Site OR contentclass:STS_Web)'&selectproperties='Path'&trimduplicates=false&rowLimit=500&Properties='EnableDynamicGroups:true'", siteUrl);
+			const queryProperties = Text.format("querytext='SPSiteUrl:{0} AND (contentclass:STS_Site OR contentclass:STS_Web)'&selectproperties='Path'&trimduplicates=false&rowLimit=500&Properties='EnableDynamicGroups:true'", siteUrl);
 
 			this.getSearchResultsRecursive(siteUrl, queryProperties)
 				.then((results: any) => {
@@ -141,7 +141,7 @@ export class SearchService {
 	 **************************************************************************************************/
 	private ensureSearchQueryParameter(queryParameters: string, parameterName: string, parameterValue: any): string {
 		if(parameterValue) {
-			let strParameter = Text.format("{0}={1}", parameterName, parameterValue);
+			const strParameter = Text.format("{0}={1}", parameterName, parameterValue);
 			queryParameters = queryParameters.replace(new RegExp('StartRow=\\d*', 'gi'), strParameter);
 
 			if(queryParameters.toLowerCase().indexOf(parameterName) < 0) {
@@ -157,13 +157,13 @@ export class SearchService {
 	 * @param results : The url of the domain from which to find the site collections
 	 **************************************************************************************************/
 	private getPathsFromResults(results: any): string[] {
-		let urls:string[] = [];
+		const urls:string[] = [];
 		let pathIndex = null;
 
-		for(let result of  results.PrimaryQueryResult.RelevantResults.Table.Rows) {
+		for(const result of  results.PrimaryQueryResult.RelevantResults.Table.Rows) {
 			// Stores the index of the "Path" cell on the first loop in order to avoid finding the cell on every loop
 			if(!pathIndex) {
-				let pathCell = result.Cells.filter((cell) => { return cell.Key == "Path"; })[0];
+				const pathCell = result.Cells.filter((cell) => { return cell.Key == "Path"; })[0];
 				pathIndex = result.Cells.indexOf(pathCell);
 			}
 			urls.push(result.Cells[pathIndex].Value.toLowerCase().trim());

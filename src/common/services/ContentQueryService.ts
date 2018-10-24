@@ -2,7 +2,7 @@ import * as strings                                             from 'contentQue
 import { IDropdownOption, IPersonaProps, ITag }                 from 'office-ui-fabric-react';
 import { SPHttpClient, SPHttpClientResponse }                   from '@microsoft/sp-http';
 import { isEmpty }                                              from '@microsoft/sp-lodash-subset';
-import { IWebPartContext }                                      from '@microsoft/sp-webpart-base';
+import { WebPartContext} from '@microsoft/sp-webpart-base';
 import { Text, Log }                                            from '@microsoft/sp-core-library';
 import { IContentQueryService }                                 from './IContentQueryService';
 import { IQueryFilterField }                                    from '../../controls/PropertyPaneQueryFilterPanel/components/QueryFilter/IQueryFilterField';
@@ -24,7 +24,7 @@ export class ContentQueryService implements IContentQueryService {
     /**************************************************************************************************
      * The page context and http clients used for performing REST calls
      **************************************************************************************************/
-    private context: IWebPartContext;
+    private context: WebPartContext;
     private spHttpClient: SPHttpClient;
 
 
@@ -50,10 +50,10 @@ export class ContentQueryService implements IContentQueryService {
 
     /**************************************************************************************************
      * Constructor
-     * @param context : A IWebPartContext for logging and page context
+     * @param context : A WebPartContext for logging and page context
      * @param spHttpClient : A SPHttpClient for performing SharePoint specific requests
      **************************************************************************************************/
-    constructor(context: IWebPartContext, spHttpClient: SPHttpClient) {
+    constructor(context: WebPartContext, spHttpClient: SPHttpClient) {
         Log.verbose(this.logSource, "Initializing a new IContentQueryService instance...", context.serviceScope);
 
         this.context = context;
@@ -76,7 +76,7 @@ export class ContentQueryService implements IContentQueryService {
         return new Promise<IContentQueryTemplateContext>((resolve,reject) => {
 
             // Initializes the base template context
-            let templateContext:IContentQueryTemplateContext = {
+            const templateContext:IContentQueryTemplateContext = {
                 pageContext: this.context.pageContext,
                 items: [],
                 accessDenied: false,
@@ -85,14 +85,14 @@ export class ContentQueryService implements IContentQueryService {
             };
 
             // Builds the CAML query based on the webpart settings
-            let query = CamlQueryHelper.generateCamlQuery(querySettings);
+            const query = CamlQueryHelper.generateCamlQuery(querySettings);
             Log.info(this.logSource, Text.format("Generated CAML query {0}...", query), this.context.serviceScope);
 
             // Queries the list with the generated caml query
             this.listService.getListItemsByQuery(querySettings.webUrl, querySettings.listId, query)
                 .then((data: any) => {
                     // Updates the template context with the normalized query results
-                    let normalizedResults = this.normalizeQueryResults(data.value, querySettings.viewFields);
+                    const normalizedResults = this.normalizeQueryResults(data.value, querySettings.viewFields);
                     templateContext.items = normalizedResults;
                     resolve(templateContext);
                 })
@@ -115,7 +115,7 @@ export class ContentQueryService implements IContentQueryService {
 
                     // If it fails for any other reason, reject with the error message
                     else {
-                        let errorMessage: string = error.statusText ? error.statusText : error;
+                        const errorMessage: string = error.statusText ? error.statusText : error;
                         reject(errorMessage);
                     }
                 }
@@ -166,7 +166,7 @@ export class ContentQueryService implements IContentQueryService {
 
         // Otherwise, performs a REST call to get the data
         return new Promise<IDropdownOption[]>((resolve,reject) => {
-            let serverUrl = Text.format("{0}//{1}", window.location.protocol, window.location.hostname); 
+            const serverUrl = Text.format("{0}//{1}", window.location.protocol, window.location.hostname); 
 
             this.searchService.getSitesStartingWith(serverUrl)
                 .then((urls) => {
@@ -175,8 +175,8 @@ export class ContentQueryService implements IContentQueryService {
 
                     // Builds the IDropdownOption[] based on the urls
                     let options:IDropdownOption[] = [ { key: "", text: strings.SiteUrlFieldPlaceholder } ];
-                    let urlOptions:IDropdownOption[] = urls.sort().map((url) => { 
-                        let serverRelativeUrl = !isEmpty(url.replace(serverUrl, '')) ? url.replace(serverUrl, '') : '/';
+                    const urlOptions:IDropdownOption[] = urls.sort().map((url) => { 
+                        const serverRelativeUrl = !isEmpty(url.replace(serverUrl, '')) ? url.replace(serverUrl, '') : '/';
                         return { key: url, text: serverRelativeUrl };
                     });
                     options = options.concat(urlOptions);
@@ -220,8 +220,8 @@ export class ContentQueryService implements IContentQueryService {
                     
                     // Builds the IDropdownOption[] based on the urls
                     let options:IDropdownOption[] = [ { key: "", text: strings.WebUrlFieldPlaceholder } ];
-                    let urlOptions:IDropdownOption[] = urls.sort().map((url) => { 
-                        let siteRelativeUrl = !isEmpty(url.replace(siteUrl, '')) ? url.replace(siteUrl, '') : '/';
+                    const urlOptions:IDropdownOption[] = urls.sort().map((url) => { 
+                        const siteRelativeUrl = !isEmpty(url.replace(siteUrl, '')) ? url.replace(siteUrl, '') : '/';
                         return { key: url, text: siteRelativeUrl };
                     });
                     options = options.concat(urlOptions);
@@ -257,7 +257,7 @@ export class ContentQueryService implements IContentQueryService {
         return new Promise<IDropdownOption[]>((resolve, reject) => {
             this.listService.getListTitlesFromWeb(webUrl).then((listTitles:IListTitle[]) => {
                 let options:IDropdownOption[] = [ { key: "", text: strings.ListTitleFieldPlaceholder } ];
-                let listTitleOptions = listTitles.map((list) => { return { key: list.id, text: list.title }; });
+                const listTitleOptions = listTitles.map((list) => { return { key: list.id, text: list.title }; });
                 options = options.concat(listTitleOptions);
                 this.listTitleOptions = options;
                 resolve(options);
@@ -290,9 +290,9 @@ export class ContentQueryService implements IContentQueryService {
         // Otherwise gets the options asynchronously
         return new Promise<IDropdownOption[]>((resolve, reject) => {
             this.listService.getListFields(webUrl, listId, ['InternalName', 'Title', 'Sortable'], 'Title').then((data:any) => {
-                let sortableFields:any[] = data.value.filter((field) => { return field.Sortable == true; });
+                const sortableFields:any[] = data.value.filter((field) => { return field.Sortable == true; });
                 let options:IDropdownOption[] = [ { key: "", text: strings.queryFilterPanelStrings.queryFilterStrings.fieldSelectLabel } ];
-                let orderByOptions:IDropdownOption[] = sortableFields.map((field) => { return { key: field.InternalName, text: Text.format("{0} \{\{{1}\}\}", field.Title, field.InternalName) }; });
+                const orderByOptions:IDropdownOption[] = sortableFields.map((field) => { return { key: field.InternalName, text: Text.format("{0} \{\{{1}\}\}", field.Title, field.InternalName) }; });
                 options = options.concat(orderByOptions);
                 this.orderByOptions = options;
                 resolve(options);
@@ -325,8 +325,8 @@ export class ContentQueryService implements IContentQueryService {
         // Otherwise gets the options asynchronously
         return new Promise<IQueryFilterField[]>((resolve, reject) => {
             this.listService.getListFields(webUrl, listId, ['InternalName', 'Title', 'TypeAsString'], 'Title').then((data:any) => {
-                let fields:any[] = data.value;
-                let options:IQueryFilterField[] = fields.map((field) => { return { 
+                const fields:any[] = data.value;
+                const options:IQueryFilterField[] = fields.map((field) => { return { 
                     internalName: field.InternalName, 
                     displayName: field.Title,
                     type: this.getFieldTypeFromString(field.TypeAsString)
@@ -362,8 +362,8 @@ export class ContentQueryService implements IContentQueryService {
         // Otherwise gets the options asynchronously
         return new Promise<IChecklistItem[]>((resolve, reject) => {
             this.listService.getListFields(webUrl, listId, ['InternalName', 'Title'], 'Title').then((data:any) => {
-                let fields:any[] = data.value;
-                let items:IChecklistItem[] = fields.map((field) => { return { 
+                const fields:any[] = data.value;
+                const items:IChecklistItem[] = fields.map((field) => { return { 
                     id: field.InternalName, 
                     label: Text.format("{0} \{\{{1}\}\}", field.Title, field.InternalName)
                 }; });
@@ -389,8 +389,8 @@ export class ContentQueryService implements IContentQueryService {
 
         return new Promise<IPersonaProps[]>((resolve, reject) => {
             this.peoplePickerService.getUserSuggestions(webUrl, filterText, 1, 15, limitResults).then((data) => {
-                let users: any[] = JSON.parse(data.value);
-                let userSuggestions:IPersonaProps[] = users.map((user) => { return { 
+                const users: any[] = JSON.parse(data.value);
+                const userSuggestions:IPersonaProps[] = users.map((user) => { return { 
                     primaryText: user.DisplayText,
                     optionalText: user.EntityData.SPUserID || user.EntityData.SPGroupID
                 }; });
@@ -416,9 +416,9 @@ export class ContentQueryService implements IContentQueryService {
 
         return new Promise<ITag[]>((resolve, reject) => {
             this.taxonomyService.getSiteTaxonomyTermsByTermSet(webUrl, listId, field.internalName, this.context.pageContext.web.language).then((data:any) => {
-                let termField = Text.format('Term{0}', this.context.pageContext.web.language);
-                let terms: any[] = data.value;
-                let termSuggestions: ITag[] = terms.map((term:any) => { return { key: term.Id, name: term[termField] }; });
+                const termField = Text.format('Term{0}', this.context.pageContext.web.language);
+                const terms: any[] = data.value;
+                const termSuggestions: ITag[] = terms.map((term:any) => { return { key: term.Id, name: term[termField] }; });
                 resolve(this.removeTermSuggestionsDuplicates(termSuggestions, currentTerms));
             })
             .catch((error) => {
@@ -458,8 +458,8 @@ export class ContentQueryService implements IContentQueryService {
     public isValidTemplateFile(filePath: string): boolean {
         Log.verbose(this.logSource, Text.format("Validating template file at url '{0}'...", filePath), this.context.serviceScope);
 
-        let path = filePath.toLowerCase().trim();
-        let pathExtension = path.substring(path.lastIndexOf('.'));
+        const path = filePath.toLowerCase().trim();
+        const pathExtension = path.substring(path.lastIndexOf('.'));
         return (pathExtension == '.htm' || pathExtension == '.html');
     }
 
@@ -469,8 +469,8 @@ export class ContentQueryService implements IContentQueryService {
      * @param viewFields : The view fields that have been selected by the user
      *************************************************************************************************/
     public generateDefaultTemplate(viewFields: string[]): string {
-        let viewFieldsStr = viewFields.map((field) => { return Text.format("                    <span><b>{0} : </b>\{\{{0}.textValue\}\}</span>", field); }).join("\n");
-        let template = Text.format(`<style type="text/css">
+        const viewFieldsStr = viewFields.map((field) => { return Text.format("                    <span><b>{0} : </b>\{\{{0}.textValue\}\}</span>", field); }).join("\n");
+        const template = Text.format(`<style type="text/css">
     .dynamic-template .dynamic-items .dynamic-item {
         background: #ffffff;
         box-shadow: 0px 0px 6px #bfbebe;
@@ -561,13 +561,13 @@ export class ContentQueryService implements IContentQueryService {
     private normalizeQueryResults(results: any[], viewFields: string[]): any[] {
         Log.verbose(this.logSource, "Normalizing results for the requested handlebars context...", this.context.serviceScope);
 
-        let normalizedResults: any[] = [];
+        const normalizedResults: any[] = [];
 
-        for(let result of results) {
-            let normalizedResult: any = {};
+        for(const result of results) {
+            const normalizedResult: any = {};
 
-            for(let viewField of viewFields) {
-                let spacesFormattedName = viewField.replace(new RegExp("_x0020_", "g"), "_x005f_x0020_x005f_");
+            for(const viewField of viewFields) {
+                const spacesFormattedName = viewField.replace(new RegExp("_x0020_", "g"), "_x005f_x0020_x005f_");
 
                 normalizedResult[viewField] = {
                     textValue: result.FieldValuesAsText[spacesFormattedName],
@@ -587,8 +587,8 @@ export class ContentQueryService implements IContentQueryService {
      **************************************************************************************************/
     private getErrorMessage(webUrl: string, error: any): string {
         let errorMessage:string = error.statusText ? error.statusText : error;
-        let serverUrl = Text.format("{0}//{1}", window.location.protocol, window.location.hostname);
-        let webServerRelativeUrl = webUrl.replace(serverUrl, '');
+        const serverUrl = Text.format("{0}//{1}", window.location.protocol, window.location.hostname);
+        const webServerRelativeUrl = webUrl.replace(serverUrl, '');
 
         if(error.status === 403) {
             errorMessage = Text.format(strings.ErrorWebAccessDenied, webServerRelativeUrl);
@@ -646,10 +646,10 @@ export class ContentQueryService implements IContentQueryService {
      **************************************************************************************************/
     private removeUserSuggestionsDuplicates(users: IPersonaProps[], currentUsers: IPersonaProps[]): IPersonaProps[] {
         Log.verbose(this.logSource, "Removing user suggestions duplicates for toolpart property 'Filters'...", this.context.serviceScope);
-        let trimmedUsers: IPersonaProps[] = [];
+        const trimmedUsers: IPersonaProps[] = [];
 
-        for(let user of users) {
-            let isDuplicate = currentUsers.filter((u) => { return u.optionalText === user.optionalText; }).length > 0;
+        for(const user of users) {
+            const isDuplicate = currentUsers.filter((u) => { return u.optionalText === user.optionalText; }).length > 0;
 
             if(!isDuplicate) {
                 trimmedUsers.push(user);
@@ -666,10 +666,10 @@ export class ContentQueryService implements IContentQueryService {
      **************************************************************************************************/
     private removeTermSuggestionsDuplicates(terms: ITag[], currentTerms: ITag[]): ITag[] {
         Log.verbose(this.logSource, "Removing term suggestions duplicates for toolpart property 'Filters'...", this.context.serviceScope);
-        let trimmedTerms: ITag[] = [];
+        const trimmedTerms: ITag[] = [];
 
-        for(let term of terms) {
-            let isDuplicate = currentTerms.filter((t) => { return t.key === term.key; }).length > 0;
+        for(const term of terms) {
+            const isDuplicate = currentTerms.filter((t) => { return t.key === term.key; }).length > 0;
 
             if(!isDuplicate) {
                 trimmedTerms.push(term);
@@ -686,7 +686,7 @@ export class ContentQueryService implements IContentQueryService {
      **************************************************************************************************/
     private ensureUrl(urls: string[], urlToEnsure: string) {
         urlToEnsure = urlToEnsure.toLowerCase().trim();
-        let urlExist = urls.filter((u) => { return u.toLowerCase().trim() === urlToEnsure; }).length > 0;
+        const urlExist = urls.filter((u) => { return u.toLowerCase().trim() === urlToEnsure; }).length > 0;
 
         if(!urlExist) {
             urls.push(urlToEnsure);

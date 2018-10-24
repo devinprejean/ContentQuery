@@ -43,7 +43,7 @@ export class QueryFilterPanel extends React.Component<IQueryFilterPanelProps, IQ
             return this.sortFiltersByIndex(this.props.filters);
         }
 
-        let defaultFilters:IQueryFilter[] = [
+        const defaultFilters:IQueryFilter[] = [
             { index: 0, field: null, operator: QueryFilterOperator.Eq, join: QueryFilterJoin.Or, value: '' }
         ];
         return defaultFilters;
@@ -103,8 +103,8 @@ export class QueryFilterPanel extends React.Component<IQueryFilterPanelProps, IQ
     private onFilterChanged(filter:IQueryFilter): void {
         // Makes sure the parent is not notified for no reason if the modified filter was (and still is) considered empty
         let isWorthNotifyingParent = true;
-        let oldFilter = this.state.filters.filter((i) => { return i.index == filter.index; })[0];
-        let oldFilterIndex = this.state.filters.indexOf(oldFilter);
+        const oldFilter = this.state.filters.filter((i) => { return i.index == filter.index; })[0];
+        const oldFilterIndex = this.state.filters.indexOf(oldFilter);
         
         if(this.props.trimEmptyFiltersOnChange && this.isFilterEmpty(oldFilter) && this.isFilterEmpty(filter)) {
             isWorthNotifyingParent = false;
@@ -119,7 +119,7 @@ export class QueryFilterPanel extends React.Component<IQueryFilterPanelProps, IQ
 
         // Notifies the parent with the updated filters
         if(isWorthNotifyingParent) {
-            let filters:IQueryFilter[] = this.props.trimEmptyFiltersOnChange ? this.state.filters.filter((f) => { return !this.isFilterEmpty(f); }) : this.state.filters;
+            const filters:IQueryFilter[] = this.props.trimEmptyFiltersOnChange ? this.state.filters.filter((f) => { return !this.isFilterEmpty(f); }) : this.state.filters;
             this.props.onChanged(filters);
         }
     }
@@ -162,8 +162,8 @@ export class QueryFilterPanel extends React.Component<IQueryFilterPanelProps, IQ
      *************************************************************************************/
     private onAddFilterClick(): void {
         // Updates the state with an all fresh new filter
-        let nextAvailableFilterIndex = this.state.filters[this.state.filters.length-1].index + 1;
-        let newFilter:IQueryFilter = { index: nextAvailableFilterIndex, field: null, operator: QueryFilterOperator.Eq, join: QueryFilterJoin.Or, value: '' };
+        const nextAvailableFilterIndex = this.state.filters[this.state.filters.length-1].index + 1;
+        const newFilter:IQueryFilter = { index: nextAvailableFilterIndex, field: null, operator: QueryFilterOperator.Eq, join: QueryFilterJoin.Or, value: '' };
         this.state.filters.push(newFilter);
 
         this.setState((prevState: IQueryFilterPanelState, props: IQueryFilterPanelProps): IQueryFilterPanelState => {
@@ -211,7 +211,7 @@ export class QueryFilterPanel extends React.Component<IQueryFilterPanelProps, IQ
                 }
 
                 { !this.state.loading && 
-                    <Button buttonType={ButtonType.primary} onClick={this.onAddFilterClick.bind(this)} disabled={this.props.disabled} icon='Add'>{this.props.strings.addFilterLabel}</Button> 
+                    <Button buttonType={ButtonType.primary} onClick={this.onAddFilterClick.bind(this)} disabled={this.props.disabled} iconProps={{iconName:'Add'}}>{this.props.strings.addFilterLabel}</Button> 
                 }
 
                 {error}

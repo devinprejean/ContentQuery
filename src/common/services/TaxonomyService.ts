@@ -32,7 +32,7 @@ export class TaxonomyService {
 			this.getListFieldTermSetId(webUrl, listId, fieldInternalName).then((termsetId: string) => {
 				
 				// Queries the Taxonomy Hidden list to retreive all terms with their wssIds
-				let endpoint = Text.format("{0}/_api/web/lists/GetByTitle('TaxonomyHiddenList')/Items?$select=Term{1},ID&$filter=IdForTermSet eq '{2}'", webUrl, (lcid ? lcid : 1033), termsetId);
+				const endpoint = Text.format("{0}/_api/web/lists/GetByTitle('TaxonomyHiddenList')/Items?$select=Term{1},ID&$filter=IdForTermSet eq '{2}'", webUrl, (lcid ? lcid : 1033), termsetId);
 				this.spHttpClient.get(endpoint, SPHttpClient.configurations.v1).then((response: SPHttpClientResponse) => {
 					if(response.ok) {
 						resolve(response.json());
@@ -57,15 +57,15 @@ export class TaxonomyService {
 	 **************************************************************************************************/
 	public getListFieldTermSetId(webUrl: string, listId: string, fieldInternalName: string): Promise<string> {
 		return new Promise<string>((resolve,reject) => {
-			let endpoint = Text.format("{0}/_api/web/lists(guid'{1}')/Fields?$select=IsTermSetValid,TermSetId&$filter=InternalName eq '{2}'", webUrl, listId, fieldInternalName);
+			const endpoint = Text.format("{0}/_api/web/lists(guid'{1}')/Fields?$select=IsTermSetValid,TermSetId&$filter=InternalName eq '{2}'", webUrl, listId, fieldInternalName);
 			this.spHttpClient.get(endpoint, SPHttpClient.configurations.v1).then((response: SPHttpClientResponse) => {
 				if(response.ok) {
 					response.json().then((data:any) => {
-						let fields:any[] = data.value;
+						const fields:any[] = data.value;
 						let fieldTermSetId = null;
 
 						if(fields.length > 0) {
-							let field = fields[0];
+							const field = fields[0];
 
 							if(field.IsTermSetValid && !isEmpty(field.TermSetId)) {
 								fieldTermSetId = field.TermSetId;
