@@ -11,6 +11,11 @@ const build = require('@microsoft/sp-build-web');
  ********************************************************************************************/
 build.configureWebpack.mergeConfig({
   additionalConfiguration: (generatedConfiguration) => {
+    generatedConfiguration.plugins.forEach((plugin, i) => {
+      if (plugin.options && plugin.options.mangle) {
+        generatedConfiguration.plugins.splice(i, 1);
+      }
+    });
 
     generatedConfiguration.resolve.alias = { handlebars: 'handlebars/dist/handlebars.min.js' };
 
